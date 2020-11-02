@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchBar = () => {
+const SearchBar = ({ handleFilter, handleSort }) => {
   return (
     <div>
       <strong>Sort by:</strong>
@@ -9,19 +9,24 @@ const SearchBar = () => {
           type="radio"
           value="Alphabetically"
           checked={null}
-          onChange={null}
+          onChange={handleSort}
         />
         Alphabetically
       </label>
       <label>
-        <input type="radio" value="Price" checked={null} onChange={null} />
+        <input
+          type="radio"
+          value="Price"
+          checked={null}
+          onChange={handleSort}
+        />
         Price
       </label>
       <br />
 
       <label>
         <strong>Filter:</strong>
-        <select onChange={null}>
+        <select onChange={handleFilter}>
           <option value="Tech">Tech</option>
           <option value="Sportswear">Sportswear</option>
           <option value="Finance">Finance</option>
