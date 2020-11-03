@@ -6,59 +6,68 @@ import SearchBar from "../components/SearchBar";
 class MainContainer extends Component {
   state = {
     stocks: [],
-    portfolio: [],
+    myStocks: [],
     filter: null,
-    sort: null,
   };
 
   componentDidMount() {
     fetch("http://localhost:6001/stocks")
       .then((resp) => resp.json())
-      .then((data) => this.setState({ stocks: data }));
+      .then((stocks) =>
+        this.setState({
+          stocks,
+        })
+      );
   }
 
   addStock = (stock) => {
-    if (!this.state.portfolio.includes(stock)) {
+    if (!this.state.myStocks.includes(stock)) {
       this.setState((prevState) => ({
-        portfolio: [...prevState.portfolio, stock],
+        myStocks: [...prevState.myStocks, stock],
       }));
     }
   };
 
   removeStock = (stock) => {
     this.setState((prevState) => ({
-      portfolio: prevState.portfolio.filter((s) => s.name !== stock.name),
+      myStocks: prevState.myStocks.filter((s) => s.id !== stock.id),
     }));
   };
 
-  handleFilter = (e) => {
+  handleFilterChange = (e) => {
     this.setState({ filter: e.target.value });
   };
 
-  handleSort = (e) => {
-    this.setState({ sort: e.target.value });
+  handleFilterStocks = () => {
+    const { stocks } = this.state;
+    if (this.state.filter) {
+      return stocks.filter((s) => s.type === this.state.filter);
+    } else {
+      return stocks;
+    }
   };
 
   render() {
-    console.log(this.state.filter, this.state.sort);
-    const { stocks, portfolio } = this.state;
-    console;
+    const { myStocks } = this.state;
+    const {
+      handleFilterChange,
+      handleFilterStocks,
+      addStock,
+      removeStock,
+    } = this;
     return (
       <div>
-        <SearchBar
-          handleFilter={this.handleFilter}
-          handleSort={this.handleSort}
-        />
+        <SearchBar handleFilterChange={handleFilterChange} />
 
         <div className="row">
           <div className="col-8">
-            <StockContainer stocks={stocks} handleClick={this.addStock} />
+            <StockContainer
+              stocks={handleFilterStocks()}
+              handleClick={addStock}
+            />
           </div>
           <div className="col-4">
-            <PortfolioContainer
-              stocks={portfolio}
-              handleClick={this.removeStock}
-            />
+            <PortfolioContainer myStocks={myStocks} handleClick={removeStock} />
           </div>
         </div>
       </div>
